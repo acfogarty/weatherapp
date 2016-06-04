@@ -1,11 +1,15 @@
-var stationKeys;
+var stationNameToId = {};
 
 window.onload = function () {
   //if (localStorage.get("hasCodeRunBefore") === null) {
     d3.csv("ghcnd-stations.csv",function(error,data) {
       console.log(error);
-      console.log(data[0]);
-      stationKeys = data;
+      for (var i in data) {
+        if ((Math.abs(parseFloat(data[i].latitude) - 50.0) < 2.0) && (Math.abs(parseFloat(data[i].longitude) - 10.0) < 2.0)) {
+          stationNameToId[data[i].locationname.trim()] = data[i].locationid.trim();
+          console.log(data[i].locationname.trim());
+        }
+      }
     });
   //  localStorage.setItem("hasCodeRunBefore", true);
   //}
@@ -52,6 +56,7 @@ function requestData() {
       console.log(jsonData.results[0]);
     }
   };
+  url = baseUrl + stationNameToId["KASSEL"] + dateUrl
   console.log(url);
   //get url from dropdownCity1.value and dropdownCity2.value
   xhttp.open("GET", url, false);
@@ -134,13 +139,15 @@ function draw(data) {
 
 
 // ****** NOAA URLs ********** 
-var baseUrl = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/'
+var baseUrl = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:'
+var dateUrl = '&startdate=2000-05-01&enddate=2001-05-01'
 var endpoint = 'stations'
 //var url = baseUrl + endpoint
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?limit=1000'
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?extent=50,8,52,10'
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations/GHCND:GME00102276'
-var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:GME00102276&startdate=2010-05-01&enddate=2010-05-01'
+var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datasets?stationid=GHCND:GME00102276'
+//var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:GME00102276&startdate=2010-05-01&enddate=2010-05-01'
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datasets?stationid=GHCND:GME00102276'
 
 
