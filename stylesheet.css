@@ -1,0 +1,39 @@
+.axis path{
+  fill: none;
+  stroke: black;
+}
+
+path {
+  fill: none;
+  stroke: black;
+}
+
+.axis {
+  font-size: 8pt;
+  font-family: sans-serif;
+}
+
+.tick {
+  fill: none;
+  stroke: black;
+}
+
+circle {
+  stroke: black;
+  stroke-width: 0.5px;
+  fill: RoyalBlue;
+  opacity: 0.6;
+}
+
+.key {
+  float: right;
+}
+
+.key_line {
+  font-size:17px;
+  width:100%;
+}
+
+#timeseries {
+  float: left;
+}
