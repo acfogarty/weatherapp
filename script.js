@@ -24,7 +24,7 @@ var mapDataKeysToLabels = {
 
 window.onload = function () {
   //if (localStorage.get("hasCodeRunBefore") === null) {
-    d3.csv("../ghcnd-stations.csv",function(error,data) {
+    d3.csv("ghcnd-stations.csv",function(error,data) {
       console.log(error);
       for (var i in data) {
         if ((Math.abs(parseFloat(data[i].latitude) - 50.0) < 2.0) && (Math.abs(parseFloat(data[i].longitude) - 10.0) < 2.0)) {
@@ -42,6 +42,20 @@ function fahrenheitToCelcius(fahrTemp) {
   return (fahrTemp - 32) * 5 / 9;
 }
 
+var inchesToMm = 25.4;
+
+function correctUnits() {
+  for (i in weatherData.station1.results) {
+    weatherData.station1.results[i].MMNT = fahrenheitToCelcius(weatherData.station1.results[i].MMNT);
+    weatherData.station1.results[i].MMXT = fahrenheitToCelcius(weatherData.station1.results[i].MMXT);
+    weatherData.station1.results[i].TPCP *= inchesToMm; 
+  }
+  for (i in weatherData.station2.results) {
+    weatherData.station2.results[i].MMXT = fahrenheitToCelcius(weatherData.station2.results[i].MMXT);
+    weatherData.station2.results[i].MMNT = fahrenheitToCelcius(weatherData.station2.results[i].MMNT);
+    weatherData.station2.results[i].TPCP *= inchesToMm; 
+  }
+}
  
 function updatePlot() {
   //TODO fire when dropdownDataKey is changed
@@ -49,6 +63,7 @@ function updatePlot() {
   //var string = '';
   //string = 'Plotting '+ dropdownDataKey.value + ' data for stations ' + dropdownCity1.value + ' and ' + dropdownCity2.value;
   //d3.json('backup.json',draw);
+  console.log(weatherData);
   draw(weatherData);
   //draw(testData);
 }
@@ -64,13 +79,14 @@ function getAPIKey() {
 function requestData() {
   var APIkey = getAPIKey();
   var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
-  url1 = baseUrl + stationNameToId["KASSEL"] + dateUrl + typeUrl + dataKey;
-  url2 = baseUrl + stationNameToId["MANNHEIM"] + dateUrl + typeUrl + dataKey;
+  url2 = baseUrl + stationNameToId["KASSEL"] + dateUrl + typeUrl + dataKey;
+  url1 = baseUrl + stationNameToId["MUENCHEN"] + dateUrl + typeUrl + dataKey;
   console.log(url1);
   console.log(url2);
   responseData1 = makeHttpRequest(url1,APIkey);
   responseData2 = makeHttpRequest(url2,APIkey);
   weatherData = {"station1":responseData1,"station2":responseData2};
+  correctUnits();
 }
 
 function makeHttpRequest(url,APIkey) {
@@ -95,6 +111,9 @@ function draw(data) {
   var xlabel = "time";
   var ylabel = mapDataKeysToLabels[dataKey];
 
+  console.log(data.station1.results)
+  console.log(data.station2.results)
+
   //viewport
   var margin = 50,
       width = 700,
@@ -110,14 +129,14 @@ function draw(data) {
     .selectAll("circle.station1")
     .data(data.station1.results)
     .enter()
-    .append("circle");
+    .append("circle")
       .attr("class","station1");
 
   d3.select("svg")
     .selectAll("circle.station2")
     .data(data.station2.results)
     .enter()
-    .append("circle");
+    .append("circle")
       .attr("class","station2");
 
   var xExtent = d3.extent(
@@ -187,14 +206,16 @@ function draw(data) {
 // ****** NOAA URLs ********** 
 var baseUrl = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:'
 var dateUrl = '&startdate=2000-05-01&enddate=2001-05-01'
+var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:GME00102244&startdate=2000-05-01&enddate=2001-05-01'
 var typeUrl = '&datatypeid='
 var endpoint = 'stations'
 //var url = baseUrl + endpoint
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?limit=1000'
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?extent=50,8,52,10'
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations/GHCND:GME00102276'
-//var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datasets?stationid=GHCND:GME00102276'
-//var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:GME00102276&startdate=2010-05-01&enddate=2010-05-01'
-//var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datasets?stationid=GHCND:GME00102276'
+//var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datasets?stationid=GHCND:GME00035010'
+//var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?extent=50.5204,8.0047,52.6139,10.1065&datasetid=GHCNDMS'
+//var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datasets?stationid=GHCND:GME00102276'
+//var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datasets?stationid=GHCND:GME00102244'
 
 
