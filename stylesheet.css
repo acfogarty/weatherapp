@@ -8,8 +8,16 @@ path {
   stroke: black;
 }
 
+path.station1 {
+  stroke: RoyalBlue;
+}
+
+path.station2 {
+  stroke: MediumSeaGreen;
+}
+
 .axis {
-  font-size: 8pt;
+  font-size: 12pt;
   font-family: sans-serif;
 }
 
@@ -23,6 +31,14 @@ circle {
   stroke-width: 0.5px;
   fill: RoyalBlue;
   opacity: 0.6;
+}
+
+circle.station1 {
+  fill: RoyalBlue;
+}
+
+circle.station1 {
+  fill: MediumSeaGreen;
 }
 
 .key {
