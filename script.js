@@ -44,10 +44,10 @@ function fahrenheitToCelcius(fahrTemp) {
 
  
 function updatePlot() {
-  //TODO fire when dropdownData is changed
+  //TODO fire when dropdownDataKey is changed
   //TODO clear plot
   //var string = '';
-  //string = 'Plotting '+ dropdownData.value + ' data for stations ' + dropdownCity1.value + ' and ' + dropdownCity2.value;
+  //string = 'Plotting '+ dropdownDataKey.value + ' data for stations ' + dropdownCity1.value + ' and ' + dropdownCity2.value;
   //d3.json('backup.json',draw);
   draw(weatherData);
   //draw(testData);
@@ -63,9 +63,9 @@ function getAPIKey() {
 
 function requestData() {
   var APIkey = getAPIKey();
-  //TODO get url from dropdownCity1.value and dropdownCity2.value
-  url1 = baseUrl + stationNameToId["KASSEL"] + dateUrl + typeUrl;
-  url2 = baseUrl + stationNameToId["MANNHEIM"] + dateUrl + typeUrl;
+  var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
+  url1 = baseUrl + stationNameToId["KASSEL"] + dateUrl + typeUrl + dataKey;
+  url2 = baseUrl + stationNameToId["MANNHEIM"] + dateUrl + typeUrl + dataKey;
   console.log(url1);
   console.log(url2);
   responseData1 = makeHttpRequest(url1,APIkey);
@@ -90,8 +90,7 @@ function makeHttpRequest(url,APIkey) {
 function draw(data) {
   //"use strict";
   //which data to plot?
-  var dropdownData = document.getElementById("dropdownData");
-  var dataKey = dropdownData.value;
+  var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
   console.log(dataKey);
   var xlabel = "time";
   var ylabel = mapDataKeysToLabels[dataKey];
@@ -188,7 +187,7 @@ function draw(data) {
 // ****** NOAA URLs ********** 
 var baseUrl = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:'
 var dateUrl = '&startdate=2000-05-01&enddate=2001-05-01'
-var typeUrl = '&datatypeid=MMXT'
+var typeUrl = '&datatypeid='
 var endpoint = 'stations'
 //var url = baseUrl + endpoint
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?limit=1000'
