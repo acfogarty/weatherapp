@@ -17,9 +17,9 @@ var mapDataKeysToLabels = {
   "TMAX":"Max temperature / Celcius",
   "TMIN":"Min temperature / Celcius",
   "PRCP":"Precipitation / mm       ",
-  "TPCP":"Total precipitation for the month / mm", //inches on NOAA
-  "MMNT":"Monthly mean minimum temperature / Celcius", //Fahrenheit on NOAA
-  "MMXT":"Monthly mean maximum temperature / Celcius", //Fahrenheit on NOAA
+  "TPCP":"Total precipitation for the month / mm", //0.1 mm NOAA
+  "MMNT":"Monthly mean minimum temperature / Celcius", //0.1 degree Celcius NOAA
+  "MMXT":"Monthly mean maximum temperature / Celcius", //0.1 degree Celcius NOAA
 }
 
 window.onload = function () {
@@ -45,15 +45,11 @@ function fahrenheitToCelcius(fahrTemp) {
 var inchesToMm = 25.4;
 
 function correctUnits() {
-  for (i in weatherData.station1.results) {
-    weatherData.station1.results[i].MMNT = fahrenheitToCelcius(weatherData.station1.results[i].MMNT);
-    weatherData.station1.results[i].MMXT = fahrenheitToCelcius(weatherData.station1.results[i].MMXT);
-    weatherData.station1.results[i].TPCP *= inchesToMm; 
+  for (var i in weatherData.station1.results) {
+    weatherData.station1.results[i].value = weatherData.station1.results[i].value/10.0;
   }
-  for (i in weatherData.station2.results) {
-    weatherData.station2.results[i].MMXT = fahrenheitToCelcius(weatherData.station2.results[i].MMXT);
-    weatherData.station2.results[i].MMNT = fahrenheitToCelcius(weatherData.station2.results[i].MMNT);
-    weatherData.station2.results[i].TPCP *= inchesToMm; 
+  for (var i in weatherData.station2.results) {
+    weatherData.station2.results[i].value = weatherData.station2.results[i].value/10.0;
   }
 }
  
@@ -81,10 +77,11 @@ function requestData() {
   var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
   url2 = baseUrl + stationNameToId["KASSEL"] + dateUrl + typeUrl + dataKey;
   url1 = baseUrl + stationNameToId["MUENCHEN"] + dateUrl + typeUrl + dataKey;
-  console.log(url1);
-  console.log(url2);
+  //console.log(url1);
+  //console.log(url2);
   responseData1 = makeHttpRequest(url1,APIkey);
   responseData2 = makeHttpRequest(url2,APIkey);
+  //responseData2 = makeHttpRequest(urlcheck,APIkey);
   weatherData = {"station1":responseData1,"station2":responseData2};
   correctUnits();
 }
@@ -93,7 +90,7 @@ function makeHttpRequest(url,APIkey) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-      //document.getElementById("demo").innerHTML = xhttp.responseText;
+      document.getElementById("demo").innerHTML = xhttp.responseText;
       responseData = JSON.parse(xhttp.responseText);
     }
   };
@@ -106,6 +103,8 @@ function makeHttpRequest(url,APIkey) {
 function draw(data) {
   //"use strict";
   //which data to plot?
+  d3.selectAll("svg > *").remove();
+
   var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
   console.log(dataKey);
   var xlabel = "time";
@@ -206,9 +205,11 @@ function draw(data) {
 // ****** NOAA URLs ********** 
 var baseUrl = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:'
 var dateUrl = '&startdate=2000-05-01&enddate=2001-05-01'
-var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:GME00102244&startdate=2000-05-01&enddate=2001-05-01'
 var typeUrl = '&datatypeid='
 var endpoint = 'stations'
+//var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:USR0000VASH&startdate=2000-05-01&enddate=2001-05-01'
+//var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/datatypes/MMXT'
+//var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:GME00102244&startdate=2000-05-01&enddate=2001-05-01'
 //var url = baseUrl + endpoint
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?limit=1000'
 //var url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/stations?extent=50,8,52,10'
