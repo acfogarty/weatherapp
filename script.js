@@ -1,5 +1,6 @@
 //global variables
 var weatherData; //data from both stations from request to NOAA API
+var stationName1,stationName2;
 var stationNameToId = {}; //map name to GHCND ID
 var timeFormat = d3.time.format('%Y-%m-%dT%H:%M:%S');
 var yBuffers = { //for adding padding on y axis inside plot
@@ -59,7 +60,7 @@ function updatePlot() {
   //var string = '';
   //string = 'Plotting '+ dropdownDataKey.value + ' data for stations ' + dropdownCity1.value + ' and ' + dropdownCity2.value;
   //d3.json('backup.json',draw);
-  console.log(weatherData);
+  //console.log(weatherData);
   draw(weatherData);
   //draw(testData);
 }
@@ -75,8 +76,11 @@ function getAPIKey() {
 function requestData() {
   var APIkey = getAPIKey();
   var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
-  url2 = baseUrl + stationNameToId["KASSEL"] + dateUrl + typeUrl + dataKey;
-  url1 = baseUrl + stationNameToId["MUENCHEN"] + dateUrl + typeUrl + dataKey;
+  //TODO get station names from dropdowns
+  stationName1 = "KASSEL";
+  stationName2 = "MUENCHEN";
+  url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
+  url2 = baseUrl + stationNameToId[stationName2] + dateUrl + typeUrl + dataKey;
   //console.log(url1);
   //console.log(url2);
   responseData1 = makeHttpRequest(url1,APIkey);
@@ -90,7 +94,7 @@ function makeHttpRequest(url,APIkey) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-      document.getElementById("demo").innerHTML = xhttp.responseText;
+      //document.getElementById("demo").innerHTML = xhttp.responseText;
       responseData = JSON.parse(xhttp.responseText);
     }
   };
@@ -110,8 +114,8 @@ function draw(data) {
   var xlabel = "time";
   var ylabel = mapDataKeysToLabels[dataKey];
 
-  console.log(data.station1.results)
-  console.log(data.station2.results)
+  //console.log(data.station1.results)
+  //console.log(data.station2.results)
 
   //viewport
   var margin = 50,
@@ -198,6 +202,37 @@ function draw(data) {
     .append("text")
       .text(ylabel)
       .attr("transform", "rotate (-90, -43, 0) translate(-280)")
+
+  var color = d3.scale.ordinal()
+    .domain([stationName1,stationName2])
+    .range(["RoyalBlue", "MediumSeaGreen"]);
+  
+  legendRectSize=10
+  legendSpacing=10
+  var legend = d3.select('svg')
+    .append("g")
+    .selectAll("g")
+    .data(color.domain())
+    .enter()
+    .append('g')
+      .attr('class', 'legend')
+      .attr('transform', function(d, i) {
+        var lheight = legendRectSize;
+          var x = width/2;
+          var y = i * lheight + height/3;
+          return 'translate(' + x + ',' + y + ')';
+      });
+  
+  legend.append('rect')
+    .attr('width', legendRectSize)
+    .attr('height', legendRectSize)
+    .style('fill', color)
+    .style('stroke', color);
+   
+  legend.append('text')
+    .attr('x', legendRectSize + legendSpacing)
+    .attr('y', legendRectSize - legendSpacing)
+    .text(function(d) { return d; });
 
 }
 
