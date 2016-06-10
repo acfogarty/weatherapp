@@ -55,14 +55,9 @@ function correctUnits() {
 }
  
 function updatePlot() {
-  //TODO fire when dropdownDataKey is changed
-  //TODO clear plot
-  //var string = '';
-  //string = 'Plotting '+ dropdownDataKey.value + ' data for stations ' + dropdownCity1.value + ' and ' + dropdownCity2.value;
   //d3.json('backup.json',draw);
   //console.log(weatherData);
   draw(weatherData);
-  //draw(testData);
 }
 
 function getAPIKey() {
@@ -77,8 +72,10 @@ function requestData() {
   var APIkey = getAPIKey();
   var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
   //TODO get station names from dropdowns
-  stationName1 = "KASSEL";
-  stationName2 = "MUENCHEN";
+  stationName1 = document.getElementById("dropdownStation1").value;
+  stationName2 = document.getElementById("dropdownStation2").value;
+  //stationName1 = "KASSEL";
+  //stationName2 = "MUENCHEN";
   url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
   url2 = baseUrl + stationNameToId[stationName2] + dateUrl + typeUrl + dataKey;
   //console.log(url1);
