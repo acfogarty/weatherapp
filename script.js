@@ -28,22 +28,15 @@ window.onload = function () {
     d3.csv("ghcnd-stations.csv",function(error,data) {
       console.log(error);
       for (var i in data) {
+        //get stations with coordinates in central Germany
         if ((Math.abs(parseFloat(data[i].latitude) - 50.0) < 2.0) && (Math.abs(parseFloat(data[i].longitude) - 10.0) < 2.0)) {
           stationNameToId[data[i].locationname.trim()] = data[i].locationid.trim();
-          //console.log(data[i].locationname.trim());
         }
       }
     });
   //  localStorage.setItem("hasCodeRunBefore", true);
   //}
 }
-
-
-function fahrenheitToCelcius(fahrTemp) {
-  return (fahrTemp - 32) * 5 / 9;
-}
-
-var inchesToMm = 25.4;
 
 function correctUnits() {
   for (var i in weatherData.station1.results) {
@@ -71,18 +64,12 @@ function getAPIKey() {
 function requestData() {
   var APIkey = getAPIKey();
   var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
-  //TODO get station names from dropdowns
   stationName1 = document.getElementById("dropdownStation1").value;
   stationName2 = document.getElementById("dropdownStation2").value;
-  //stationName1 = "KASSEL";
-  //stationName2 = "MUENCHEN";
   url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
   url2 = baseUrl + stationNameToId[stationName2] + dateUrl + typeUrl + dataKey;
-  //console.log(url1);
-  //console.log(url2);
   responseData1 = makeHttpRequest(url1,APIkey);
   responseData2 = makeHttpRequest(url2,APIkey);
-  //responseData2 = makeHttpRequest(urlcheck,APIkey);
   weatherData = {"station1":responseData1,"station2":responseData2};
   correctUnits();
 }
