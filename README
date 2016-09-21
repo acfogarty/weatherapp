@@ -1,0 +1,17 @@
+javascript script for graphically comparing climate data from different German weather stations
+
+Requests weather data from NOAA API (www.ncdc.noaa.gov).
+Uses d3 for plotting.
+
+Needs the following files which are not in the repository:
+
+ghcnd-stations.csv - This should contain the columns: locationid,latitude,longitude,elevation,locationname
+
+APIkey - This contains the key for www.ncdc.noaa.gov
+
+************************************************
+
+To test locally:
+* serve files using
+python -m SimpleHTTPServer 8000
+* direct browser to http://localhost:8000/
