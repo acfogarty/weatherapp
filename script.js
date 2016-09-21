@@ -13,7 +13,7 @@ var yBuffers = { //for adding padding on y axis inside plot
 }; 
 
 //units are for output data, not for data read from NOAA
-//data must be converted
+//data must be converted after reading
 var mapDataKeysToLabels = {
   "TMAX":"Max temperature / Celcius",
   "TMIN":"Min temperature / Celcius",
@@ -39,6 +39,8 @@ window.onload = function () {
 }
 
 function correctUnits() {
+  //converting from NOAA units to display units
+  //NOAA units: 0.1 mm, 0.1 degrees Celcius
   for (var i in weatherData.station1.results) {
     weatherData.station1.results[i].value = weatherData.station1.results[i].value/10.0;
   }
@@ -63,7 +65,7 @@ function getAPIKey() {
 
 function requestData() {
   var APIkey = getAPIKey();
-  var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
+  var dataKey = document.getElementById("dropdownDataKey").value; //TODO maybe make this global
   stationName1 = document.getElementById("dropdownStation1").value;
   stationName2 = document.getElementById("dropdownStation2").value;
   url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
@@ -78,7 +80,7 @@ function makeHttpRequest(url,APIkey) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
-      //document.getElementById("demo").innerHTML = xhttp.responseText;
+      //document.getElementById("debug").innerHTML = xhttp.responseText; //for debugging
       responseData = JSON.parse(xhttp.responseText);
     }
   };
@@ -90,16 +92,11 @@ function makeHttpRequest(url,APIkey) {
 
 function draw(data) {
   //"use strict";
-  //which data to plot?
   d3.selectAll("svg > *").remove();
 
-  var dataKey = document.getElementById("dropdownDataKey").value; //maybe make this global
-  console.log(dataKey);
+  var dataKey = document.getElementById("dropdownDataKey").value; //TODO maybe make this global
   var xlabel = "time";
   var ylabel = mapDataKeysToLabels[dataKey];
-
-  //console.log(data.station1.results)
-  //console.log(data.station2.results)
 
   //viewport
   var margin = 50,

@@ -1,4 +1,4 @@
-add many stations to dropdown
-aesthetics of plots
-combine buttons
-choose different start and end dates
+- add many stations to dropdown
+- aesthetics of plots (fix x and y axes, legend placement)
+- combine buttons 'Request data' and 'Plot'
+- let the user choose different start and end dates

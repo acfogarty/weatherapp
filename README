@@ -1,4 +1,4 @@
-javascript script for graphically comparing climate data from different German weather stations
+webapp for graphically comparing climate data from different German weather stations
 
 Requests weather data from NOAA API (www.ncdc.noaa.gov).
 Uses d3 for plotting.
