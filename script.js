@@ -23,6 +23,8 @@ var mapDataKeysToLabels = {
   "MMXT":"Monthly mean maximum temperature / Celcius", //0.1 degree Celcius NOAA
 }
 
+
+// function which runs once page has fully loaded
 window.onload = function () {
   //if (localStorage.get("hasCodeRunBefore") === null) {
     d3.csv("ghcnd-stations.csv",function(error,data) {
@@ -55,6 +57,7 @@ function updatePlot() {
   draw(weatherData);
 }
 
+// read NOAA API key from plain text file
 function getAPIKey() {
   var xhttp = new XMLHttpRequest();
   xhttp.overrideMimeType('text/plain');
@@ -65,21 +68,24 @@ function getAPIKey() {
 
 function requestData() {
   var APIkey = getAPIKey();
+  // get values selected in web form
   var dataKey = document.getElementById("dropdownDataKey").value; //TODO maybe make this global
   stationName1 = document.getElementById("dropdownStation1").value;
   stationName2 = document.getElementById("dropdownStation2").value;
   url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
   url2 = baseUrl + stationNameToId[stationName2] + dateUrl + typeUrl + dataKey;
+  // download data for the two stations
   responseData1 = makeHttpRequest(url1,APIkey);
   responseData2 = makeHttpRequest(url2,APIkey);
   weatherData = {"station1":responseData1,"station2":responseData2};
+  // NOAA units to display units
   correctUnits();
 }
 
 function makeHttpRequest(url,APIkey) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
+    if (xhttp.readyState == 4 && xhttp.status == 200) { // readyState == DONE and status == OK
       //document.getElementById("debug").innerHTML = xhttp.responseText; //for debugging
       responseData = JSON.parse(xhttp.responseText);
     }
@@ -92,16 +98,17 @@ function makeHttpRequest(url,APIkey) {
 
 function draw(data) {
   //"use strict";
-  d3.selectAll("svg > *").remove();
+  d3.selectAll("svg > *").remove();  // for refresh/redraw
 
+  // axis labels
   var dataKey = document.getElementById("dropdownDataKey").value; //TODO maybe make this global
   var xlabel = "time";
   var ylabel = mapDataKeysToLabels[dataKey];
 
   //viewport
-  var margin = 50,
-      width = 700,
-      height = 300;
+  var margin = 90,
+      width = 750,
+      height = 350;
   d3.select("body")
     .append("svg")
       .attr("width",width)
@@ -166,12 +173,19 @@ function draw(data) {
     .append("g")
       .attr("class","x axis")
       .attr("transform", "translate(0," + (height-margin) + ")")
-    .call(xAxis);
-  d3.select(".x.axis")
-    .append("text")
-      .text(xlabel)
-      .attr("x", (width/2)-margin)
-      .attr("y", margin/1.5);
+    .call(xAxis)
+    // rotate x-axis tick labels
+    .selectAll("text")
+      .attr("y", 0)
+      .attr("x", 9)
+      .attr("dy", ".35em")
+      .attr("transform", "rotate(90)")
+      .style("text-anchor", "start");
+//  d3.select(".x.axis")
+//    .append("text")
+//      .text(xlabel)
+//      .attr("x", (width/2)-margin)
+//      .attr("y", margin/1.5);
     
   var yAxis = d3.svg.axis().scale(yScale).orient("left");
   d3.select("svg")
@@ -182,12 +196,13 @@ function draw(data) {
   d3.select(".y.axis")
     .append("text")
       .text(ylabel)
-      .attr("transform", "rotate (-90, -43, 0) translate(-280)")
+      .attr("transform", "rotate (-90, -43, 0) translate(-330)")
 
   var color = d3.scale.ordinal()
     .domain([stationName1,stationName2])
     .range(["RoyalBlue", "MediumSeaGreen"]);
-  
+ 
+  // legend 
   legendRectSize=10
   legendSpacing=10
   var legend = d3.select('svg')
