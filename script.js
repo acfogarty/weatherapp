@@ -219,7 +219,7 @@ function draw(data) {
 
 
 // ****** NOAA URLs ********** 
-var baseUrl = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:'
+var baseUrl = 'https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:'
 var dateUrl = '&startdate=2000-05-01&enddate=2001-05-01'
 var typeUrl = '&datatypeid='
 var endpoint = 'stations'
