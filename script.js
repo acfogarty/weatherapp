@@ -30,8 +30,8 @@ window.onload = function () {
     d3.csv("ghcnd-stations.csv",function(error,data) {
       console.log(error);
       for (var i in data) {
-        //get stations with coordinates in central Germany
-        if ((Math.abs(parseFloat(data[i].latitude) - 50.0) < 2.0) && (Math.abs(parseFloat(data[i].longitude) - 10.0) < 2.0)) {
+        //get stations with coordinates centered around central Germany
+        if ((Math.abs(parseFloat(data[i].latitude) - 50.0) < 20.0) && (Math.abs(parseFloat(data[i].longitude) - 10.0) < 20.0)) {
           stationNameToId[data[i].locationname.trim()] = data[i].locationid.trim();
         }
       }
@@ -196,7 +196,7 @@ function draw(data) {
   d3.select(".y.axis")
     .append("text")
       .text(ylabel)
-      .attr("transform", "rotate (-90, -43, 0) translate(-330)")
+      .attr("transform", "rotate (-90, -43, 0) translate(-340)")
 
   var color = d3.scale.ordinal()
     .domain([stationName1,stationName2])
