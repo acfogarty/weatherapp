@@ -3,3 +3,4 @@
 - combine buttons 'Request data' and 'Plot'
 - let the user choose different start and end dates
 - remove text when refreshing plot
+- write warning to html when no data could be downloaded

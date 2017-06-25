@@ -47,9 +47,66 @@
     <option value="MMNT">Temperature (min)</option>
     <option value="TPCP">Precipitation    </option>
   </select>
-  
-  <button type="button" onclick="requestData()">Request Data</button>
-  <button type="button" onclick="updatePlot()">Plot</button>
+ 
+  <p>Start date:</p>
+
+  <div class="startDatePicker">
+    <span>
+      <label for="month">Month:</label>
+      <select id="startDateMonthSelector" name="month">
+        <option selected value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </span>
+    <span>
+      <label for="year">Year:</label>
+      <select id="startDateYearSelector" name="year">
+      </select>
+    </span>
+  </div>
+
+  <p>End date:</p>
+ 
+  <div class="endDatePicker">
+    <span>
+      <label for="month">Month:</label>
+      <select id="endDateMonthSelector" name="month">
+        <option selected value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </span>
+    <span>
+      <label for="year">Year:</label>
+      <select id="endDateYearSelector" name="year">
+      </select>
+    </span>
+  </div>
+
+  </ br>
+  <p>
+    <button type="button" onclick="requestData()">Request Data</button>
+    <button type="button" onclick="updatePlot()">Plot</button>
+  </p>
   
   <div id="timeseries"></div>
   <div id="key"></div>

@@ -24,11 +24,32 @@ var mapDataKeysToLabels = {
 }
 
 
+// function for dynamically populating years in date picker
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date
+function populateYears() {
+  // get this year as a number
+  var date = new Date();
+  var year = date.getFullYear();
+
+  var startDateYearSelect = document.querySelector('#startDateYearSelector');
+  var endDateYearSelect = document.querySelector('#endDateYearSelector');
+
+  // Make this year, and the 100 years before it available in the year <select>
+  for(var i = 0; i <= 50; i++) {
+    var option1 = document.createElement('option');
+    var option2 = document.createElement('option');
+    option1.textContent = year-i;
+    option2.textContent = year-i;
+    startDateYearSelect.appendChild(option1);
+    endDateYearSelect.appendChild(option2);
+  }
+}
+
+
 // function which runs once page has fully loaded
 window.onload = function () {
   //if (localStorage.get("hasCodeRunBefore") === null) {
     d3.csv("ghcnd-stations.csv",function(error,data) {
-      console.log(error);
       for (var i in data) {
         //get stations with coordinates centered around central Germany
         if ((Math.abs(parseFloat(data[i].latitude) - 50.0) < 20.0) && (Math.abs(parseFloat(data[i].longitude) - 10.0) < 20.0)) {
@@ -36,6 +57,7 @@ window.onload = function () {
         }
       }
     });
+    populateYears();
   //  localStorage.setItem("hasCodeRunBefore", true);
   //}
 }
@@ -72,11 +94,17 @@ function requestData() {
   var dataKey = document.getElementById("dropdownDataKey").value; //TODO maybe make this global
   stationName1 = document.getElementById("dropdownStation1").value;
   stationName2 = document.getElementById("dropdownStation2").value;
-  url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
-  url2 = baseUrl + stationNameToId[stationName2] + dateUrl + typeUrl + dataKey;
+  var startMonth = document.getElementById("startDateMonthSelector").value;
+  var endMonth = document.getElementById("endDateMonthSelector").value;
+  var startYear = document.getElementById("startDateYearSelector").value;
+  var endYear = document.getElementById("endDateYearSelector").value;
+  var dateUrl = '&startdate=' + startYear + '-' + startMonth + '-01&enddate=' + endYear + '-' + endMonth + '-01';
+  
+  var url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
+  var url2 = baseUrl + stationNameToId[stationName2] + dateUrl + typeUrl + dataKey;
   // download data for the two stations
-  responseData1 = makeHttpRequest(url1,APIkey);
-  responseData2 = makeHttpRequest(url2,APIkey);
+  var responseData1 = makeHttpRequest(url1,APIkey);
+  var responseData2 = makeHttpRequest(url2,APIkey);
   weatherData = {"station1":responseData1,"station2":responseData2};
   // NOAA units to display units
   correctUnits();
@@ -235,7 +263,7 @@ function draw(data) {
 
 // ****** NOAA URLs ********** 
 var baseUrl = 'https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:'
-var dateUrl = '&startdate=2000-05-01&enddate=2001-05-01'
+//var dateUrl = '&startdate=2000-05-01&enddate=2001-05-01'
 var typeUrl = '&datatypeid='
 var endpoint = 'stations'
 //var urlcheck = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCNDMS&stationid=GHCND:USR0000VASH&startdate=2000-05-01&enddate=2001-05-01'
