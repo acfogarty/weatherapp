@@ -11,6 +11,7 @@ var yBuffers = { //for adding padding on y axis inside plot
   "MMNT":5,
   "MMXT":5,
 }; 
+var APIkey;
 
 //units are for output data, not for data read from NOAA
 //data must be converted after reading
@@ -58,6 +59,7 @@ window.onload = function () {
       }
     });
     populateYears();
+    APIkey = getAPIKey();
   //  localStorage.setItem("hasCodeRunBefore", true);
   //}
 }
@@ -89,7 +91,6 @@ function getAPIKey() {
 }
 
 function requestData() {
-  var APIkey = getAPIKey();
   // get values selected in web form
   var dataKey = document.getElementById("dropdownDataKey").value; //TODO maybe make this global
   stationName1 = document.getElementById("dropdownStation1").value;
@@ -98,19 +99,38 @@ function requestData() {
   var endMonth = document.getElementById("endDateMonthSelector").value;
   var startYear = document.getElementById("startDateYearSelector").value;
   var endYear = document.getElementById("endDateYearSelector").value;
+
+  if (endYear < startYear) {
+    alert('Error! Start year is later than end year');
+  }
+
+  if ((endYear == startYear) && (endMonth <= startMonth)) {
+    alert('Error! Start month is later than or equal to end month');
+  }
+
   var dateUrl = '&startdate=' + startYear + '-' + startMonth + '-01&enddate=' + endYear + '-' + endMonth + '-01';
   
-  var url1 = baseUrl + stationNameToId[stationName1] + dateUrl + typeUrl + dataKey;
-  var url2 = baseUrl + stationNameToId[stationName2] + dateUrl + typeUrl + dataKey;
   // download data for the two stations
-  var responseData1 = makeHttpRequest(url1,APIkey);
-  var responseData2 = makeHttpRequest(url2,APIkey);
+  var responseData1 = getDataOneStation(stationName1, dateUrl, typeUrl, dataKey);
+  var responseData2 = getDataOneStation(stationName2, dateUrl, typeUrl, dataKey);
   weatherData = {"station1":responseData1,"station2":responseData2};
+
   // NOAA units to display units
   correctUnits();
 }
 
-function makeHttpRequest(url,APIkey) {
+function getDataOneStation(stationName, dateUrl, typeUrl, dataKey) {
+  var url = baseUrl + stationNameToId[stationName] + dateUrl + typeUrl + dataKey;
+  var responseData = makeHttpRequest(url, APIkey);
+  console.log(Object.keys(responseData).length);
+  if (Object.keys(responseData).length == 0) {
+    alert('No NOAA data for ' + stationName + ' station for those dates');
+  }
+  console.log(responseData);
+  return responseData;
+}
+
+function makeHttpRequest(url, APIkey) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) { // readyState == DONE and status == OK
@@ -119,7 +139,7 @@ function makeHttpRequest(url,APIkey) {
     }
   };
   xhttp.open("GET", url, false);
-  xhttp.setRequestHeader("token",APIkey.trim());
+  xhttp.setRequestHeader("token", APIkey.trim());
   xhttp.send();
   return responseData;
 }
