@@ -1,8 +1,10 @@
-- get API key on page load DONE
 - add more stations to dropdown
 - add stations dynamically to dropdown
-- aesthetics of plots (legend placement)
-- combine buttons 'Request data' and 'Plot'
-- let the user choose different start and end dates DONE
+- aesthetics of plots 
+- refresh plot with different stations or metric
 - remove text when refreshing plot
+- legend placement DONE
+- let the user choose different start and end dates DONE
 - write warning to html when no data could be downloaded DONE
+- combine buttons 'Request data' and 'Plot' DONE
+- get API key on page load DONE
