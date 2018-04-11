@@ -127,7 +127,7 @@ function draw(data) {
       .attr('transform', function(d, i) {
         var lheight = legendRectSize + legendSpacing;
           var x = width/2;
-          var y = i * lheight + height/3;
+          var y = i * lheight + 0.1*height;
           return 'translate(' + x + ',' + y + ')';
       });
   
